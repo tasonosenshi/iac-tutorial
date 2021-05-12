@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=https://json.schemastore.org/ansible-playbook
+---
+- name: Deploy Raddit App
+  hosts: raddit_app
+  tasks:
+    - name: Fetch the latest version of application code
+      git:
+        repo: 'https://github.com/tasonosenshi/raddit.git'
+        dest: /home/raddit-user/raddit
+      register: clone
+
+    - name: Install application dependencies
+      become: yes
+      bundler:
+        state: present
+        chdir: /home/raddit-user/raddit
+      when: clone.changed
+      notify: Restart raddit
+      
+  handlers:
+    - name: Restart raddit
+      become: yes
+      systemd: 
+        name: raddit
+        state: restarted
+        enabled: yes

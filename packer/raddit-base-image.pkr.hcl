@@ -12,8 +12,7 @@ source "googlecompute" "iac-tutorial" {
 build {
   sources = ["source.googlecompute.iac-tutorial"]
 
-  provisioner "shell" {
-    script          = "${path.root}/../scripts/configuration.sh"
-    execute_command = "sudo {{ .Path }}"
+  provisioner "ansible" {
+    playbook_file = "${path.root}/../ansible/configuration.yml"
   }
 }

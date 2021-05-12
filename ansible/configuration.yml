@@ -1,0 +1,49 @@
+# yaml-language-server: $schema=https://json.schemastore.org/ansible-playbook
+---
+- name: Configure Raddit Image
+  become: true
+  gather_facts: true
+  hosts: all
+
+  tasks:
+    - name: Install Ruby
+      apt:
+        update_cache: yes
+        name:
+          - ruby-full
+          - build-essential
+    
+    - name: Install Bundler
+      gem:
+        name: bundler
+        user_install: no
+    
+    - name: Install MongoDB apt-key
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: EA312927
+
+    - name: Add MongoDB repo
+      apt_repository:
+        repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
+        filename: mongodb-org-3.2
+
+    - name: Install MongoDB
+      apt:
+        update_cache: yes
+        name:
+          - mongodb-org
+        force: yes
+
+    - name: Start MongoDB
+      systemd:
+        state: started
+        enabled: yes
+        name: mongod
+
+    - name: Add service file for Raddit app
+      get_url:
+        dest: /etc/systemd/system/raddit.service
+        url: https://gist.githubusercontent.com/Artemmkin/ce82397cfc69d912df9cd648a8d69bec/raw/7193a36c9661c6b90e7e482d256865f085a853f2/raddit.service
+
+        

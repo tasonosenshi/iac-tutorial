@@ -1,5 +1,5 @@
 resource "google_compute_instance" "raddit" {
-    name = "raddit-instance-5"
+    name = "raddit-instance"
     machine_type = "n1-standard-1"
     zone = "us-east4-a"
 
